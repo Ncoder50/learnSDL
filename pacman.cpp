@@ -12,14 +12,14 @@ enum KEY_PRESS_SURFACES {
     LENGTH
 };
 
-const int SCREEN_WIDTH = 3440;
-const int SCREEN_HEIGHT = 1440;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 SDL_Surface* g_key_surfaces[LENGTH];
 
+void main_loop(SDL_Window* window, SDL_Surface* screen_surface);
 bool init(SDL_Window** window, SDL_Surface** screen_surface);
 bool load_media();
 SDL_Surface* load_surface(const char* image_path);
-void main_loop(SDL_Window* window, SDL_Surface* screen_surface);
 void update(SDL_Window* window);
 void close(SDL_Window* window, SDL_Surface* screen_surface); 
 
@@ -140,7 +140,10 @@ void update(SDL_Window* window) {
 }
 
 void close(SDL_Window* window, SDL_Surface* screen_surface) {
-    delete[] screen_surface;
+    for(int i = 0; i < LENGTH; ++i)
+		SDL_FreeSurface(g_key_surfaces[i]);
+
+    SDL_FreeSurface(screen_surface);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
