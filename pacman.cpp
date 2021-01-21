@@ -12,14 +12,16 @@ enum KEY_PRESS_SURFACES {
     LENGTH
 };
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 3440;
+const int SCREEN_HEIGHT = 1440;
+
 SDL_Surface* g_key_surfaces[LENGTH];
 
-void main_loop(SDL_Window* window, SDL_Surface* screen_surface);
+void main_loop(SDL_Window* window, SDL_Surface* screen_surface, SDL_Rect* rect);
 bool init(SDL_Window** window, SDL_Surface** screen_surface);
-bool load_media();
-SDL_Surface* load_surface(const char* image_path);
+bool load_media(SDL_Surface* screen_surface);
+SDL_Surface* load_surface(SDL_Surface* screen_surface, const char* image_path);
+SDL_Rect* load_rect();
 void update(SDL_Window* window);
 void close(SDL_Window* window, SDL_Surface* screen_surface); 
 
@@ -30,17 +32,19 @@ int main(int argc, char* args[]) {
     if (!init(&window, &screen_surface))
         cout << "Initialization failed!\n";
 
-    if (!load_media())
+    if (!load_media(screen_surface))
         cout << "Loading media failed!\n";
 
-    main_loop(window, screen_surface);
+    SDL_Rect* rect = load_rect();
+
+    main_loop(window, screen_surface, rect);
     close(window, screen_surface);
     return 0;
 }
 
-void main_loop(SDL_Window* window, SDL_Surface* screen_surface) {
+void main_loop(SDL_Window* window, SDL_Surface* screen_surface, SDL_Rect* rect) {
     SDL_Surface* curr_surface = g_key_surfaces[DEFAULT];
-    SDL_BlitSurface(curr_surface, NULL, screen_surface, NULL);
+    SDL_BlitScaled(curr_surface, NULL, screen_surface, rect);
     update(window);
     SDL_Event e;
     while (true) {
@@ -69,7 +73,7 @@ void main_loop(SDL_Window* window, SDL_Surface* screen_surface) {
                     curr_surface = g_key_surfaces[DEFAULT];
                     break;
                 }
-                SDL_BlitSurface(curr_surface, NULL, screen_surface, NULL);
+                SDL_BlitScaled(curr_surface, NULL, screen_surface, rect);
                 update(window);
             }
         }
@@ -95,32 +99,32 @@ bool init(SDL_Window** window, SDL_Surface** screen_surface) {
     return true;
 }
 
-bool load_media() {
-    g_key_surfaces[LEFT] = load_surface("images/left.bmp");
+bool load_media(SDL_Surface* screen_surface) {
+    g_key_surfaces[LEFT] = load_surface(screen_surface, "images/left.bmp");
     if (g_key_surfaces[LEFT] == NULL){
         cout << "Failed to load left image!\n";
         return false;
     }
 
-    g_key_surfaces[UP] = load_surface("images/up.bmp");
+    g_key_surfaces[UP] = load_surface(screen_surface, "images/up.bmp");
     if (g_key_surfaces[UP] == NULL){
         cout << "Failed to load up image!\n";
         return false;
     }
 
-    g_key_surfaces[RIGHT] = load_surface("images/right.bmp");
+    g_key_surfaces[RIGHT] = load_surface(screen_surface, "images/right.bmp");
     if (g_key_surfaces[RIGHT] == NULL){
         cout << "Failed to load right image!\n";
         return false;
     }
 
-    g_key_surfaces[DOWN] = load_surface("images/down.bmp");
+    g_key_surfaces[DOWN] = load_surface(screen_surface, "images/down.bmp");
     if (g_key_surfaces[DOWN] == NULL){
         cout << "Failed to load down image!\n";
         return false;
     }
 
-    g_key_surfaces[DEFAULT] = load_surface("images/press.bmp");
+    g_key_surfaces[DEFAULT] = load_surface(screen_surface, "images/press.bmp");
     if (g_key_surfaces[DEFAULT] == NULL){
         cout << "Failed to load default image!\n";
         return false;
@@ -128,11 +132,24 @@ bool load_media() {
     return true;
 }
 
-SDL_Surface* load_surface(const char* image_path) {
+SDL_Surface* load_surface(SDL_Surface* screen_surface, const char* image_path) {
     SDL_Surface* surface = SDL_LoadBMP(image_path);
     if (surface == nullptr)
         cout << "Loading of: " << image_path << " failed!\n";
-    return surface;
+    SDL_Surface* stretched_surface = SDL_ConvertSurface(surface, screen_surface->format, 0);
+    if (stretched_surface == nullptr)
+        cout << "Converting surface of: " << image_path << " failed!\n";
+    SDL_FreeSurface(surface);
+    return stretched_surface;
+}
+
+SDL_Rect* load_rect() {
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = SCREEN_WIDTH;
+    rect.h = SCREEN_HEIGHT;
+    return &rect;
 }
 
 void update(SDL_Window* window) {
