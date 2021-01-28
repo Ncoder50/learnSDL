@@ -1,0 +1,6 @@
+N = number of rows
+M = number of columns
+
+walkable_tiles [N][M] = 1 if walkable = 0 if not
+
+candy_tiles [N][M] = 0 if no candy, = 1 if small candy, = 2 if murder cherry, = 3 if large candy

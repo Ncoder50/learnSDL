@@ -1,0 +1,30 @@
+Init game
+
+start;
+Show Ready Sequence
+
+Main loop:
+    if walkable_tiles[position.x + vel_x][position.y + vel_y]:
+        position.x += vel_x
+        position.y += vel_y
+    else:
+        goto ai
+    
+    if candy_tiles[position.x][position.y]:
+        Score += candy_tiles[position.x][position.y]
+        candy_tiles[position.x][position.y] = 0
+
+        if candy_tiles[position.x][position.y] == 2:
+            eat_state = True
+
+    ai;
+    for each ai in ais:
+        ai.position = find_path
+        if ai.position == position:
+            life -= 1
+            if life
+                goto start
+            goto game_over
+
+    update_window
+
