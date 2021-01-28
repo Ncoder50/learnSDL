@@ -8,7 +8,7 @@ CC = g++
 COMPILER_FLAGS = -w
 
 # Linker flags
-LINKER_FLAGS = -lSDL2 -lSDL2main
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 # Executable
 OBJ_NAME = pacman

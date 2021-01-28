@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 using namespace std;
 
@@ -93,14 +94,22 @@ bool init(SDL_Window** window, SDL_Surface** screen_surface) {
             return false;
         }
         else {
-            *screen_surface = SDL_GetWindowSurface(*window);
+            int img_flags = IMG_INIT_PNG;
+            // Chekcs if the returned flags contains the flags we sent in
+            if (!(IMG_Init(img_flags) & img_flags)) {
+                cout << "SDL_image could not initialize!\n";
+                return false;
+            }
+            else {
+                *screen_surface = SDL_GetWindowSurface(*window);
+            }
         }
     }
     return true;
 }
 
 bool load_media(SDL_Surface* screen_surface) {
-    g_key_surfaces[LEFT] = load_surface(screen_surface, "images/left.bmp");
+    g_key_surfaces[LEFT] = load_surface(screen_surface, "images/loaded.png");
     if (g_key_surfaces[LEFT] == NULL){
         cout << "Failed to load left image!\n";
         return false;
@@ -133,12 +142,14 @@ bool load_media(SDL_Surface* screen_surface) {
 }
 
 SDL_Surface* load_surface(SDL_Surface* screen_surface, const char* image_path) {
-    SDL_Surface* surface = SDL_LoadBMP(image_path);
+    SDL_Surface* surface = IMG_Load(image_path);
     if (surface == nullptr)
-        cout << "Loading of: " << image_path << " failed!\n";
+        cout << "Loading of: " << image_path << " failed!\n" << IMG_GetError();
+    
     SDL_Surface* stretched_surface = SDL_ConvertSurface(surface, screen_surface->format, 0);
     if (stretched_surface == nullptr)
         cout << "Converting surface of: " << image_path << " failed!\n";
+    
     SDL_FreeSurface(surface);
     return stretched_surface;
 }
