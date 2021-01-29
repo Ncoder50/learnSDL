@@ -1,5 +1,5 @@
 # Files
-OBJS = pacman.cpp
+OBJS = learn.cpp
 
 # Compiler
 CC = g++
@@ -11,7 +11,7 @@ COMPILER_FLAGS = -w
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 # Executable
-OBJ_NAME = pacman
+OBJ_NAME = run
 
 # Compilation
 all : $(OBJS)
