@@ -23,7 +23,6 @@ void main_loop(SDL_Window* window, SDL_Renderer* renderer);
 bool init(SDL_Window** window, SDL_Surface** screen_surface, SDL_Renderer** renderer);
 bool load_media(SDL_Renderer* renderer);
 SDL_Texture* load_texture(SDL_Renderer* renderer, const char* image_path);
-void update(SDL_Window* window);
 void close(SDL_Window* window, SDL_Surface* screen_surface, SDL_Renderer* renderer); 
 
 int main(int argc, char* args[]) {
@@ -156,10 +155,6 @@ SDL_Texture* load_texture(SDL_Renderer* renderer, const char* image_path) {
 
     SDL_FreeSurface(surface);
     return texture;
-}
-
-void update(SDL_Window* window) {
-    SDL_UpdateWindowSurface(window);
 }
 
 void close(SDL_Window* window, SDL_Surface* screen_surface, SDL_Renderer* renderer) {
